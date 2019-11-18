@@ -217,7 +217,7 @@ export default {
             this.form.password = '',
             this.updatedId = item.id
     },
-
+    
         deleteData(deleteId){
             var uri=this.$apiUrl + '/user/' + deleteId;
             this.$http.delete(uri).then(response =>{
