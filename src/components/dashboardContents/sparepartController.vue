@@ -2,7 +2,7 @@
     <v-container>   
         <v-card>
             <v-container grid-list-md mb-0>
-                <h2 class="text-md-center">Data User</h2> 
+                <h2 class="text-md-center">Data sparepart</h2> 
                 <v-layout row wrap style="margin:10px">
                     <v-flex xs6>
                         <v-btn depressed 
@@ -13,7 +13,7 @@
                         @click="dialog = true"
                         >
                         <v-icon size="18" class="mr-2">mdi-pencil-plus</v-icon> 
-                            Tambah User
+                            Tambah sparepart
                         </v-btn>
                     </v-flex>
                     <v-flex xs6 class="text-right">
@@ -28,7 +28,7 @@
 
                 <v-data-table
                     :headers="headers"
-                    :items="parts"
+                    :items="spareparts"
                     :search="keyword"
                     :loading="load"
                 >
@@ -39,8 +39,8 @@
                             <td>{{ index + 1 }}</td>
                             <td>{{ item.name }}</td>
                             <td>{{ item.merk}}</td>
-                            <td>{{ item.Jumlah }}</td>
-                            <td>{{ item.Tanggal }}</td>
+                            <td>{{ item.amount}}</td>
+                            <td>{{ item.created_at}}</td>
                             <td class="text-center">
                                 <v-btn 
                                 icon 
@@ -67,7 +67,7 @@
     </v-card>
     <v-dialog v-model="dialog" persistent max-width="600px"> <v-card>
         <v-card-title>
-            <span class="headline">User Profile</span>
+            <span class="headline">Sparepart</span>
         </v-card-title>
         <v-card-text>
             <v-container>
@@ -76,13 +76,10 @@
                         <v-text-field label="Name*" v-model="form.name" required></v-text-field>
                     </v-col>
                     <v-col cols="12">
-                        <v-text-field label="Merk*" v-model="form.merk" required></v-text-field> 
+                        <v-text-field label="merk*" v-model="form.merk" required></v-text-field> 
                     </v-col>
                     <v-col cols="12">
-                        <v-text-field label="Jumlah*" v-model="form.Jumlah" required></v-text-field>
-                    </v-col>
-                     <v-col cols="12">
-                        <v-text-field label="Tanggal*" v-model="form.Tanggal" required></v-text-field>
+                        <v-text-field label="amount*" v-model="form.amount" required></v-text-field>
                     </v-col>
                 </v-row>
             </v-container>
@@ -134,19 +131,16 @@ export default {
                     value: 'merk'
                     },
                     {
-                    text: 'Jumlah',
-                    value: 'jumlah'
+                    text: 'Amount',
+                    value: 'amount'
                     },
-                    {
-                    text: 'Tanggal',
-                    value: 'tanggal'
-                    },
+
                     {
                     text: 'Aksi',
                     value: null
                     },  
             ],
-            users: [],
+            spareparts: [],
             snackbar: false,
             color: null,
             text: '',
@@ -154,10 +148,10 @@ export default {
             form: {
                 name : '',
                 merk : '',
-                jumlah : '',
-                tanggal : ''
+                amount : '',
+        
             },
-            user : new FormData,
+            sparepart : new FormData,
             typeInput: 'new',
             errors : '',
             updatedId : '',
@@ -165,26 +159,26 @@ export default {
     },
     methods:{
         getData(){
-            var uri = this.$apiUrl + '/user'
+            var uri = this.$apiUrl + '/sparepart'
             this.$http.get(uri).then(response =>{
-                this.users=response.data.message
+                this.spareparts=response.data.message
         })
     },
 
         sendData(){
-            this.user.append('name', this.form.name);
-            this.user.append('merk', this.form.merk);
-            this.user.append('jumlah', this.form.Jumlah)
-            this.user.append('tanggal',this.form.tanggal);
-            var uri =this.$apiUrl + '/user'
+            this.sparepart.append('name', this.form.name);
+            this.sparepart.append('merk', this.form.merk);
+            this.sparepart.append('amount', this.form.amount);
+    
+            var uri =this.$apiUrl + '/sparepart'
             this.load = true
-            this.$http.post(uri,this.user).then(response =>{
+            this.$http.post(uri,this.sparepart).then(response =>{
                 this.snackbar = true; //mengaktifkan snackbar
                 this.color = 'green'; //memberi warna snackbar
                 this.text = response.data.message; //memasukkan pesan ke snackbar
                 this.load = false;
                 this.dialog = false
-                this.getData(); //mengambil data user
+                this.getData(); //mengambil data sparepart
                 this.resetForm();
             }).catch(error =>{
                 this.errors = error
@@ -196,18 +190,18 @@ export default {
     },
 
         updateData(){
-            this.user.append('name', this.form.name);
-            this.user.append('merk', this.form.merk);
-            this.user.append('jumlah', this.form.Jumlah)
-            this.user.append('tanggal',this.form.tanggal);
-            var uri = this.$apiUrl + '/user/' + this.updatedId;
+            this.sparepart.append('name', this.form.name);
+            this.sparepart.append('merk', this.form.merk);
+            this.sparepart.append('amount', this.form.amount);
+
+            var uri = this.$apiUrl + '/sparepart/' + this.updatedId;
             this.load = true
-            this.$http.post(uri,this.user).then(response =>{
+            this.$http.post(uri,this.sparepart).then(response =>{
                 this.snackbar = true; //mengaktifkan snackbar this.color = 'green'; //memberi warna snackbar
                 this.text = response.data.message; //memasukkan pesan ke snackbar
                 this.load = false;
                 this.dialog = false
-                this.getData(); //mengambil data user
+                this.getData(); //mengambil data sparepart
                 this.resetForm();
                 this.typeInput = 'new';
             }).catch(error =>{
@@ -224,13 +218,14 @@ export default {
             this.typeInput = 'edit';
             this.dialog = true;
             this.form.name = item.name;
-            this.form.email = item.email;
-            this.form.password = '',
+            this.form.merek = item.merek;
+            this.form.amount = item.merek;
+  
             this.updatedId = item.id
     },
 
         deleteData(deleteId){
-            var uri=this.$apiUrl + '/user/' + deleteId;
+            var uri=this.$apiUrl + '/sparepart/' + deleteId;
             this.$http.delete(uri).then(response =>{
                 this.snackbar=true;
                 this.text=response.data.message;
@@ -256,8 +251,9 @@ export default {
         resetForm(){
             this.form = {
                 name : '',
-                merk : '',
-                password : ''
+                merek : '',
+                amount : '',
+            
             }
         }
     },
